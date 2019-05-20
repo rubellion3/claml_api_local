@@ -1,0 +1,24 @@
+{
+  "name": "claml_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rubellion3/claml_api_local.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rubellion3/claml_api_local/issues"
+  },
+  "homepage": "https://github.com/rubellion3/claml_api_local#readme",
+  "dependencies": {
+    "express": "^4.17.0",
+    "mysql": "^2.17.1",
+    "nodemon": "^1.19.0"
+  }
+}
