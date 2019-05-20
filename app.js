@@ -18,3 +18,12 @@ conn.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
 });
+
+
+app.get('/sharp',(req,res) =>{
+    conn.query("SELECT * FROM sharp_code", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if(err) throw err
+            res.json(rows)
+    })
+})
