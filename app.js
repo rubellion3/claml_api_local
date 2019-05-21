@@ -3,7 +3,7 @@ const mysql = require("mysql")
 const app = express()
 
 app.listen(3003), (req,res) =>{
-    console.log("USE 3003 local hsot")
+    console.log("USE 3003 local host")
 }
 // mysql://bbac4540e8603d:5151c993@us-cdbr-iron-east-02.cleardb.net/heroku_c808d92fb94adc8?reconnect=true
 const conn = mysql.createConnection({
