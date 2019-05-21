@@ -31,3 +31,36 @@ app.get('/icd10',(req,res) =>{
             res.json(rows)
     })
 })
+
+app.get('/term',(req,res) =>{
+    conn.query("SELECT * FROM term_table", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+    })
+})
+
+app.get('/term/:id',(req,res) =>{
+    let term_id = req.params.id;
+    if (!term_id) {
+        return res.status(400).send({ error: true, message: 'Please provide term_id' });
+       }
+    conn.query("SELECT * FROM term_table where term_id=?", term_id,(err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+    })
+})
+
+app.get('/term/:id/:type',(req,res) =>{
+    let term_id = req.params.id;
+    let type = req.params.type;
+    if (!term_id) {
+        return res.status(400).send({ error: true, message: 'Please provide term_id' });
+       }
+    conn.query("SELECT * FROM term_table where term_id=? and typeId=?", [term_id,type],(err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+    })
+})
