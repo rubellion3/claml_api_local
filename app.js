@@ -5,12 +5,12 @@ const app = express()
 app.listen(3003), (req,res) =>{
     console.log("USE 3003 local hsot")
 }
-
+// mysql://bbac4540e8603d:5151c993@us-cdbr-iron-east-02.cleardb.net/heroku_c808d92fb94adc8?reconnect=true
 const conn = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'data'
+    host: '@us-cdbr-iron-east-02.cleardb.net',
+    user: 'bbac4540e8603d',
+    password: '5151c993',
+    database: 'heroku_c808d92fb94adc8'
 })
 
 conn.connect(function(err) {
