@@ -15,9 +15,20 @@ const conn = mysql.createConnection({
     database: 'test'
 })
 
+const conn_stat = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'statistic'
+})
+
 conn.connect(function(err) {
     if (err) throw err;
     console.log("Connected to mysql!");
+});
+conn_stat.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected to mysql! database:stat");
 });
 
 app.get('/',(req,res) =>{
@@ -64,3 +75,77 @@ app.get('/term/:id/:type',(req,res) =>{
             res.json(rows)
     })
 })
+
+app.get('/category_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM claml_category_stat", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
+
+app.get('/codeType_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM claml_codekind_all", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
+
+app.get('/codeType_chap_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM claml_codekind_bychapter", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
+
+app.get('/subCat_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM claml_subcategory_stat_all", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
+
+app.get('/mod_1digit_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM claml_subcategory_stat_1digitmodifer", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
+
+app.get('/mod_2digit_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM claml_subcategory_stat_2digitmodifer", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
+
+
+app.get('/mod_code_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM claml_subcategory_stat_modifieronly", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
+
+app.get('/code_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM claml_subcategory_stat_normalonly", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
+
