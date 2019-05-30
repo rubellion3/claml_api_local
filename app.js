@@ -28,6 +28,13 @@ const conn_stat = mysql.createConnection({
     database: 'statistic'
 })
 
+const conn_network = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'network'
+})
+
 conn.connect(function(err) {
     if (err) throw err;
     console.log("Connected to mysql!");
@@ -37,6 +44,10 @@ conn_stat.connect(function(err) {
     console.log("Connected to mysql! database:stat");
 });
 
+conn_network.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected to mysql! database:network");
+});
 app.get('/',(req,res) =>{
  res.send("This is an icd10 api makes by sharifz")
 })
@@ -87,7 +98,7 @@ app.get('/category_stat',(req,res) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("claml_category_stat")
     })
 })
 
@@ -96,7 +107,7 @@ app.get('/codeType_stat',(req,res) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("claml_codekind_all")
     })
 })
 
@@ -105,7 +116,7 @@ app.get('/codeType_chap_stat',(req,res) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("claml_codekind_bychapter")
     })
 })
 
@@ -114,7 +125,7 @@ app.get('/subCat_stat',(req,res) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("claml_subcategory_stat_all")
     })
 })
 
@@ -123,7 +134,7 @@ app.get('/mod_1digit_stat',(req,res) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("claml_subcategory_stat_1digitmodifer")
     })
 })
 
@@ -132,7 +143,7 @@ app.get('/mod_2digit_stat',(req,res) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("claml_subcategory_stat_2digitmodifer")
     })
 })
 
@@ -142,7 +153,7 @@ app.get('/mod_code_stat',(req,res) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("claml_subcategory_stat_modifieronly")
     })
 })
 
@@ -151,7 +162,54 @@ app.get('/code_stat',(req,res) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("claml_subcategory_stat_normalonly")
     })
 })
 
+
+app.get('/icd10_tree/child',(req,res) =>{
+    let type = req.params.type;
+    conn_network.query("SELECT  source_code,destination_code,destinationtype FROM network.icd10_tree where destinationtype='child'",type, (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("icd10_tree")
+    })
+})
+
+app.get('/icd10_tree/parent',(req,res) =>{
+    let type = req.params.type;
+    conn_network.query("SELECT  source_code,destination_code,destinationtype FROM network.icd10_tree where destinationtype='parent'",type, (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("icd10_tree")
+    })
+})
+
+app.get('/icd10_tree/source',(req,res) =>{
+    let type = req.params.type;
+    conn_network.query("SELECT distinct  sourceId,source_code FROM network.icd10_tree",type, (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("icd10_tree")
+    })
+})
+app.get('/mesh_tree',(req,res) =>{
+    conn_network.query("SELECT * FROM mesh_tree", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("mesh_tree")
+    })
+})
+
+app.get('/snomed_tree',(req,res) =>{
+    conn_network.query("SELECT * FROM snomed_tree", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("snomed_tree")
+    })
+})
