@@ -196,6 +196,15 @@ app.get('/icd10_tree/source',(req,res) =>{
             console.log("icd10_tree")
     })
 })
+app.get('/icd10_tree/source_link',(req,res) =>{
+    let type = req.params.type;
+    conn_network.query("SELECT  distinct sourceId,destinationId FROM network.icd10_tree",type, (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("icd10_tree_link")
+    })
+})
 app.get('/mesh_tree',(req,res) =>{
     conn_network.query("SELECT * FROM mesh_tree", (err,rows,fields) =>{
         console.log("fecth.....")
