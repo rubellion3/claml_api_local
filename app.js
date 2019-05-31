@@ -189,7 +189,7 @@ app.get('/icd10_tree/parent',(req,res) =>{
 
 app.get('/icd10_tree/source',(req,res) =>{
     let type = req.params.type;
-    conn_network.query("SELECT distinct  sourceId,source_code FROM network.icd10_tree",type, (err,rows,fields) =>{
+    conn_network.query("SELECT * FROM network.icd10_source",type, (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
@@ -198,7 +198,7 @@ app.get('/icd10_tree/source',(req,res) =>{
 })
 app.get('/icd10_tree/source_link',(req,res) =>{
     let type = req.params.type;
-    conn_network.query("SELECT  distinct sourceId,destinationId FROM network.icd10_tree",type, (err,rows,fields) =>{
+    conn_network.query("SELECT * FROM network.icd10_relation",type, (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
