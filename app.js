@@ -35,15 +35,27 @@ const conn_network = mysql.createConnection({
     database: 'network'
 })
 
+const conn_search = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'search'
+})
+
+
 conn.connect(function(err) {
     if (err) throw err;
-    console.log("Connected to mysql!");
+    // console.log("Connected to mysql!");
 });
 conn_stat.connect(function(err) {
     if (err) throw err;
     console.log("Connected to mysql! database:stat");
 });
 
+conn_search.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected to mysql! database:search");
+});
 conn_network.connect(function(err) {
     if (err) throw err;
     console.log("Connected to mysql! database:network");
@@ -93,6 +105,38 @@ app.get('/term/:id/:type',(req,res) =>{
     })
 })
 
+app.get('/keyword',(req,res) =>{
+    conn_search.query("SELECT * FROM all_keyword2  order by id desc limit 100   ", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("keyword")
+    })
+})
+
+app.get('/icd_phase',(req,res) =>{
+    conn_search.query("SELECT * FROM icd10withkeyid  limit 10000", (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("phase")
+    })
+})
+
+app.get('/icd_phase/:id',(req,res) =>{
+    let id = req.params.id;
+    if (!id) {
+        return res.status(400).send({ error: true, message: 'Please provide id' });
+       }
+    conn_search.query("SELECT * FROM icd10withkeyid where keywordId=?",id, (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("phase")
+    })
+})
+
+// statistic
 app.get('/category_stat',(req,res) =>{
     conn_stat.query("SELECT * FROM claml_category_stat", (err,rows,fields) =>{
         console.log("fecth.....")
@@ -189,7 +233,7 @@ app.get('/icd10_tree/parent',(req,res) =>{
 
 app.get('/icd10_tree/source',(req,res) =>{
     let type = req.params.type;
-    conn_network.query("SELECT * FROM network.icd10_source",type, (err,rows,fields) =>{
+    conn_network.query("SELECT * FROM network.icd10_source LIMIT 10",type, (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
@@ -198,7 +242,7 @@ app.get('/icd10_tree/source',(req,res) =>{
 })
 app.get('/icd10_tree/source_link',(req,res) =>{
     let type = req.params.type;
-    conn_network.query("SELECT * FROM network.icd10_relation",type, (err,rows,fields) =>{
+    conn_network.query("SELECT * FROM network.icd10_relation LIMIT 10",type, (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
