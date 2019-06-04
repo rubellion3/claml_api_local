@@ -132,9 +132,49 @@ app.get('/icd_phase/:id',(req,res) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
-            console.log("phase")
+            console.log("icd10 phase")
     })
 })
+
+app.get('/mesh_phase/:id',(req,res) =>{
+    let id = req.params.id;
+    if (!id) {
+        return res.status(400).send({ error: true, message: 'Please provide id' });
+       }
+    conn_search.query("SELECT * FROM meshwithkeyid where keywordId=?",id, (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("mesh phase")
+    })
+})
+
+app.get('/snomed_phase/:id',(req,res) =>{
+    let id = req.params.id;
+    if (!id) {
+        return res.status(400).send({ error: true, message: 'Please provide id' });
+       }
+    conn_search.query("SELECT * FROM snomedwithkeyid where keywordId=?",id, (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("snomed phase")
+    })
+})
+
+app.get('/thai_phase/:id',(req,res) =>{
+    let id = req.params.id;
+    if (!id) {
+        return res.status(400).send({ error: true, message: 'Please provide id' });
+       }
+    conn_search.query("SELECT * FROM thaiwithkeyid where keywordId=?",id, (err,rows,fields) =>{
+        console.log("fecth.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("thai phase")
+    })
+})
+
 
 // statistic
 app.get('/category_stat',(req,res) =>{
