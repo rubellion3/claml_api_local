@@ -106,7 +106,7 @@ app.get('/term/:id/:type',(req,res) =>{
 })
 
 app.get('/keyword',(req,res) =>{
-    conn_search.query("SELECT * FROM all_keyword2  order by id desc limit 100   ", (err,rows,fields) =>{
+    conn_search.query("SELECT * FROM all_keyword2  order by id desc    ", (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
