@@ -14,12 +14,6 @@ app.listen(PORT), (req,res) =>{
 }
 // mysql://bbac4540e8603d:5151c993@us-cdbr-iron-east-02.cleardb.net/heroku_c808d92fb94adc8?reconnect=true
 // mongodb+srv://rubellion3:<password>@cluster0-4uldx.mongodb.net/test?retryWrites=true
-const conn = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'test'
-})
 
 const conn_stat = mysql.createConnection({
     host: 'localhost',
@@ -47,6 +41,12 @@ conn.connect(function(err) {
     if (err) throw err;
     // console.log("Connected to mysql!");
 });
+
+
+// conn.connect(function(err) {
+//     if (err) throw err;
+//     console.log("Connected to mysql!");
+// });
 conn_stat.connect(function(err) {
     if (err) throw err;
     console.log("Connected to mysql! database:stat");
@@ -178,8 +178,8 @@ app.get('/thai_phase/:id',(req,res) =>{
 
 // statistic
 app.get('/category_stat',(req,res) =>{
-    conn_stat.query("SELECT * FROM claml_category_stat", (err,rows,fields) =>{
-        console.log("fecth.....")
+    conn_stat.query("SELECT * FROM claml_category_stat c ORDER BY c.character", (err,rows,fields) =>{
+        console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("claml_category_stat")
@@ -188,7 +188,7 @@ app.get('/category_stat',(req,res) =>{
 
 app.get('/codeType_stat',(req,res) =>{
     conn_stat.query("SELECT * FROM claml_codekind_all", (err,rows,fields) =>{
-        console.log("fecth.....")
+        console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("claml_codekind_all")
@@ -197,7 +197,7 @@ app.get('/codeType_stat',(req,res) =>{
 
 app.get('/codeType_chap_stat',(req,res) =>{
     conn_stat.query("SELECT * FROM claml_codekind_bychapter", (err,rows,fields) =>{
-        console.log("fecth.....")
+        console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("claml_codekind_bychapter")
@@ -206,7 +206,7 @@ app.get('/codeType_chap_stat',(req,res) =>{
 
 app.get('/subCat_stat',(req,res) =>{
     conn_stat.query("SELECT * FROM claml_subcategory_stat_all", (err,rows,fields) =>{
-        console.log("fecth.....")
+        console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("claml_subcategory_stat_all")
@@ -215,7 +215,7 @@ app.get('/subCat_stat',(req,res) =>{
 
 app.get('/mod_1digit_stat',(req,res) =>{
     conn_stat.query("SELECT * FROM claml_subcategory_stat_1digitmodifer", (err,rows,fields) =>{
-        console.log("fecth.....")
+        console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("claml_subcategory_stat_1digitmodifer")
@@ -224,7 +224,7 @@ app.get('/mod_1digit_stat',(req,res) =>{
 
 app.get('/mod_2digit_stat',(req,res) =>{
     conn_stat.query("SELECT * FROM claml_subcategory_stat_2digitmodifer", (err,rows,fields) =>{
-        console.log("fecth.....")
+        console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("claml_subcategory_stat_2digitmodifer")
@@ -234,7 +234,7 @@ app.get('/mod_2digit_stat',(req,res) =>{
 
 app.get('/mod_code_stat',(req,res) =>{
     conn_stat.query("SELECT * FROM claml_subcategory_stat_modifieronly", (err,rows,fields) =>{
-        console.log("fecth.....")
+        console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("claml_subcategory_stat_modifieronly")
@@ -242,8 +242,8 @@ app.get('/mod_code_stat',(req,res) =>{
 })
 
 app.get('/code_stat',(req,res) =>{
-    conn_stat.query("SELECT * FROM claml_subcategory_stat_normalonly", (err,rows,fields) =>{
-        console.log("fecth.....")
+    conn_stat.query("SELECT * FROM icd10_subcategory_stat_normalonly ORDER BY alpha", (err,rows,fields) =>{
+        console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("claml_subcategory_stat_normalonly")
@@ -313,3 +313,21 @@ app.get('/snomed_tree',(req,res) =>{
             console.log("snomed_tree")
     })
 })
+app.get('/mesh_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM mesh_stat;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
+
+app.get('/icd10_tm_pcu_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM `number_of_icd10_tm_pcu(14)`;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("icd10_tm_pcu_stat")
+    })
+})
+
