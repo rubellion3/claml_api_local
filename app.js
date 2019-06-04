@@ -249,7 +249,14 @@ app.get('/code_stat',(req,res) =>{
             console.log("claml_subcategory_stat_normalonly")
     })
 })
-
+app.get('/mesh_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM mesh_stat;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("category_stat")
+    })
+})
 
 app.get('/icd10_tree/child',(req,res) =>{
     let type = req.params.type;
