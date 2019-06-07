@@ -128,3 +128,60 @@ app.get('/icd10_tm_pcu_stat',(req,res) =>{
     })
 })
 
+app.get('/all_subcat_stat',(req,res) =>{
+    conn_stat.query("SELECT *, count(chapter) total FROM statistic.`icd10_subcategory_stat_all_raw2(4)`GROUP BY chapter HAVING count(chapter) >1 ORDER BY CASE WHEN chapter = 'CHAPTER XXII'THEN 0 END, claml_code ASC;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("all_subcat_stat")
+    })
+})
+
+app.get('/3match_stat',(req,res) =>{
+    conn_stat.query("SELECT *, count(WHO) COUNT FROM statistic.`icd10_thcc_pcu2(13)` WHERE WHO like 'exist' AND THCC like 'exist' AND PCU like 'exist' GROUP BY chapter HAVING COUNT(chapter) > 1 ORDER BY CASE WHEN chapter = 'CHAPTER XXII' THEN 0 END,code ASC;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("3match_stat")
+    })
+})
+app.get('/icd10_keyPhrase_stat',(req,res) =>{
+    conn_stat.query("SELECT *, count(chapter) COUNT FROM statistic.`icd10_keyphase_stat_raw(8)` GROUP BY chapter HAVING COUNT(chapter) > 0 ORDER BY keyPhraseId ASC;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("icd10_keyPhrase_stat")
+    })
+})
+app.get('/keyWord_keyPhrase_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM statistic.stat_keyword_and_keyphrase;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("keyWord_keyPhrase_stat")
+    })
+})
+app.get('/new_block_stat',(req,res) =>{
+    conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.block_stat_new ORDER BY Roman;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("new_block_stat")
+    })
+})
+app.get('/new_cat_stat',(req,res) =>{
+    conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.category_stat_new ORDER BY Roman;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("new_cat_stat")
+    })
+})
+app.get('/new_subCat_stat',(req,res) =>{
+    conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.sub_category_stat_new order by Roman;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("new_subCat_stat")
+    })
+})
