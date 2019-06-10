@@ -37,14 +37,76 @@ app.get('/',(req,res) =>{
  res.send("This is an icd10 api makes by sharifz")
 })
 
+app.get('/new_block_stat',(req,res) =>{
+    conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.block_stat_new ORDER BY Roman;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("new_block_stat")
+    })
+})
+app.get('/new_cat_stat',(req,res) =>{
+    conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.category_stat_new ORDER BY Roman;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("new_cat_stat")
+    })
+})
+app.get('/new_subCat_stat',(req,res) =>{
+    conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.sub_category_stat_new order by Roman;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("new_subCat_stat")
+    })
+})
+
+app.get('/mod_1digit_chap_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM statistic.icd10_subcategory_stat_1digitmodifer_bychapter;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("mod_1digit_chap_stat")
+    })
+})
+
+app.get('/mod_2digit_chap_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM statistic.icd10_subcategory_stat_2digitmodifer_bychapter;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("mod_2digit_chap_stat")
+    })
+})
+
+app.get('/mod_total_chap_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM statistic.icd10_subcategory_stat_modifieronly_bychapter;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("mod_total_chap_stat")
+    })
+})
+
+app.get('/block_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM statistic.block_stat_new_alpha;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("block_stat")
+    })
+})
+
 app.get('/category_stat',(req,res) =>{
-    conn_stat.query("SELECT * FROM claml_category_stat c ORDER BY c.character", (err,rows,fields) =>{
+    conn_stat.query("SELECT * FROM statistic.category_stat_new_alpha;", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("category_stat")
     })
 })
+
 
 app.get('/codeType_stat',(req,res) =>{
     conn_stat.query("SELECT * FROM claml_codekind_all", (err,rows,fields) =>{
@@ -78,7 +140,7 @@ app.get('/mod_1digit_stat',(req,res) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("mod_1digit_stat")
     })
 })
 
@@ -87,17 +149,25 @@ app.get('/mod_2digit_stat',(req,res) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("mod_2digit_stat")
     })
 })
 
+app.get('/mod_total_char_stat',(req,res) =>{
+    conn_stat.query("SELECT * FROM statistic.icd10_subcategory_stat_modifieronly_byalpha;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("mod_total_char_stat")
+    })
+})
 
 app.get('/mod_code_stat',(req,res) =>{
     conn_stat.query("SELECT * FROM claml_subcategory_stat_modifieronly", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
-            console.log("category_stat")
+            console.log("mod_code_stat")
     })
 })
 
@@ -129,7 +199,7 @@ app.get('/icd10_tm_pcu_stat',(req,res) =>{
 })
 
 app.get('/all_subcat_stat',(req,res) =>{
-    conn_stat.query("SELECT *, count(chapter) total FROM statistic.`icd10_subcategory_stat_all_raw2(4)`GROUP BY chapter HAVING count(chapter) >1 ORDER BY CASE WHEN chapter = 'CHAPTER XXII'THEN 0 END, claml_code ASC;", (err,rows,fields) =>{
+    conn_stat.query("SELECT distinct claml_code, chapter, count(distinct(claml_code)) COUNT FROM statistic.`icd10_subcategory_stat_all_raw2(4)` GROUP BY chapter HAVING count(chapter) >1 ORDER BY CASE WHEN chapter = 'CHAPTER XXII'THEN 0 END, claml_code ASC;", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
@@ -161,27 +231,4 @@ app.get('/keyWord_keyPhrase_stat',(req,res) =>{
             console.log("keyWord_keyPhrase_stat")
     })
 })
-app.get('/new_block_stat',(req,res) =>{
-    conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.block_stat_new ORDER BY Roman;", (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("new_block_stat")
-    })
-})
-app.get('/new_cat_stat',(req,res) =>{
-    conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.category_stat_new ORDER BY Roman;", (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("new_cat_stat")
-    })
-})
-app.get('/new_subCat_stat',(req,res) =>{
-    conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.sub_category_stat_new order by Roman;", (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("new_subCat_stat")
-    })
-})
+
