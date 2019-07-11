@@ -15,6 +15,12 @@ app.listen(PORT), (req,res) =>{
 // mysql://bbac4540e8603d:5151c993@us-cdbr-iron-east-02.cleardb.net/heroku_c808d92fb94adc8?reconnect=true
 // mongodb+srv://rubellion3:<password>@cluster0-4uldx.mongodb.net/test?retryWrites=true
 
+const conn = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'test'
+})
 const conn_stat = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -33,7 +39,7 @@ const conn_search = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'search'
+    database: 'search_index'
 })
 
 
@@ -43,10 +49,6 @@ conn.connect(function(err) {
 });
 
 
-// conn.connect(function(err) {
-//     if (err) throw err;
-//     console.log("Connected to mysql!");
-// });
 conn_stat.connect(function(err) {
     if (err) throw err;
     console.log("Connected to mysql! database:stat");
@@ -106,7 +108,7 @@ app.get('/term/:id/:type',(req,res) =>{
 })
 
 app.get('/keyword',(req,res) =>{
-    conn_search.query("SELECT * FROM all_keyword2  order by id desc    ", (err,rows,fields) =>{
+    conn_search.query("SELECT * FROM all_keyword  order by id desc    ", (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
@@ -115,7 +117,7 @@ app.get('/keyword',(req,res) =>{
 })
 
 app.get('/icd_phase',(req,res) =>{
-    conn_search.query("SELECT * FROM icd10withkeyid  limit 10000", (err,rows,fields) =>{
+    conn_search.query("SELECT * FROM icd10withkeyid_ready  limit 10000", (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
@@ -128,7 +130,7 @@ app.get('/icd_phase/:id',(req,res) =>{
     if (!id) {
         return res.status(400).send({ error: true, message: 'Please provide id' });
        }
-    conn_search.query("SELECT * FROM icd10withkeyid where keywordId=?",id, (err,rows,fields) =>{
+    conn_search.query("SELECT * FROM icd10withkeyid_ready where keywordId=?",id, (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
@@ -141,7 +143,7 @@ app.get('/mesh_phase/:id',(req,res) =>{
     if (!id) {
         return res.status(400).send({ error: true, message: 'Please provide id' });
        }
-    conn_search.query("SELECT * FROM meshwithkeyid where keywordId=?",id, (err,rows,fields) =>{
+    conn_search.query("SELECT * FROM meshwithkeyid_ready where keywordId=?",id, (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
@@ -154,7 +156,7 @@ app.get('/snomed_phase/:id',(req,res) =>{
     if (!id) {
         return res.status(400).send({ error: true, message: 'Please provide id' });
        }
-    conn_search.query("SELECT * FROM snomedwithkeyid where keywordId=?",id, (err,rows,fields) =>{
+    conn_search.query("SELECT * FROM snomedwithkeyid_ready where keywordId=?",id, (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
@@ -167,7 +169,7 @@ app.get('/thai_phase/:id',(req,res) =>{
     if (!id) {
         return res.status(400).send({ error: true, message: 'Please provide id' });
        }
-    conn_search.query("SELECT * FROM thaiwithkeyid where keywordId=?",id, (err,rows,fields) =>{
+    conn_search.query("SELECT * FROM thaiwithkeyid_ready where keywordId=?",id, (err,rows,fields) =>{
         console.log("fecth.....")
         if (err) throw err;
             res.json(rows)
@@ -214,20 +216,20 @@ app.get('/subCat_stat',(req,res) =>{
 })
 
 app.get('/mod_1digit_stat',(req,res) =>{
-    conn_stat.query("SELECT * FROM claml_subcategory_stat_1digitmodifer", (err,rows,fields) =>{
+    conn_stat.query("SELECT * FROM icd10_subcategory_stat_1digitmodifer", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
-            console.log("claml_subcategory_stat_1digitmodifer")
+            console.log("icd10_subcategory_stat_1digitmodifer")
     })
 })
 
 app.get('/mod_2digit_stat',(req,res) =>{
-    conn_stat.query("SELECT * FROM claml_subcategory_stat_2digitmodifer", (err,rows,fields) =>{
+    conn_stat.query("SELECT * FROM icd10_subcategory_stat_2digitmodifer", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
-            console.log("claml_subcategory_stat_2digitmodifer")
+            console.log("icd10_subcategory_stat_2digitmodifer")
     })
 })
 
@@ -247,14 +249,6 @@ app.get('/code_stat',(req,res) =>{
         if (err) throw err;
             res.json(rows)
             console.log("claml_subcategory_stat_normalonly")
-    })
-})
-app.get('/mesh_stat',(req,res) =>{
-    conn_stat.query("SELECT * FROM mesh_stat;", (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("category_stat")
     })
 })
 
@@ -323,7 +317,7 @@ app.get('/mesh_stat',(req,res) =>{
 })
 
 app.get('/icd10_tm_pcu_stat',(req,res) =>{
-    conn_stat.query("SELECT * FROM `number_of_icd10_tm_pcu(14)`;", (err,rows,fields) =>{
+    conn_stat.query("SELECT * FROM `number_of_icd10_tm_pcu`;", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
