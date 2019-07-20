@@ -56,14 +56,6 @@ conn_stat.connect(function(err) {
   console.log("Connected to mysql! database:stat");
 });
 
-conn_search.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected to mysql! database:search");
-});
-conn_network.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected to mysql! database:network");
-});
 app.get("/", (req, res) => {
   res.send("This is an icd10 api makes by sharifz");
 });
