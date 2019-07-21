@@ -378,6 +378,14 @@ app.get('/error_cat_icd10_table_stat',(req,res) =>{
             console.log("error_cat_icd10_table_stat")
     })
 })
+app.get('/useful_keyword',(req,res) =>{
+    conn_stat.query("select count(distinct LOWER(compare.icd10_keyword_sharif_ver.keyword)) icd10_keyword, (select count(distinct lem_keyword) mesh_snomed_keyword from compare.all_unique_mesh_snomed_stem_lem_ver2) mesh_snomed_keyword from compare.icd10_keyword_sharif_ver;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("useful_keyword")
+    })
+})
 
 
 
