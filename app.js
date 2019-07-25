@@ -23,7 +23,6 @@ const conn_stat = mysql.createConnection({
 })
 
 
-
 // conn.connect(function(err) {
 //     if (err) throw err;
 //     console.log("Connected to mysql!");
@@ -431,30 +430,28 @@ app.get('/error_subcat_icd10_stat',(req,res) =>{
 })
 app.get('/useful_keyword',(req,res) =>{
     conn_stat.query("SELECT res.icd10_keyword, res. mesh_snomed_keyword, res.number, format(res.mesh_snomed_keyword,0) number2 FROM (SELECT count(distinct LOWER(icd10_keyword_sharif_ver.keyword)) icd10_keyword, (select count(distinct lem_keyword) mesh_snomed_keyword from compare.all_unique_mesh_snomed_stem_lem_ver2) mesh_snomed_keyword, format(count(distinct LOWER(keyword)), 0) number FROM compare.icd10_keyword_sharif_ver) res;", (err,rows,fields) =>{
-app.get('/error_subcat_icd10_table_stat',(req,res) =>{
-    conn_stat.query("SELECT chapter, (preferred_name + inclusion + exclusion + codinghint + `definition` + footnote + note + modifierlink + star + draggers) as summation FROM( SELECT chapter, SUM(`code` NOT LIKE '') code, SUM(`preferred-name` NOT LIKE '') preferred_name, SUM(inclusion NOT LIKE '') inclusion, SUM(exclusion NOT LIKE '') exclusion, SUM(codinghint NOT LIKE '') codinghint, SUM(`definition` NOT LIKE '') `definition`, SUM(footnote NOT LIKE '') footnote, SUM(note NOT LIKE '') note, SUM(modifierlink NOT LIKE '') modifierlink, SUM(star NOT LIKE '') star, SUM(draggers NOT LIKE '') draggers, FromRoman(chapter) Roman FROM web_project_table.icd10_category_errorreport GROUP BY chapter ORDER BY Roman) res;", (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("error_subcat_icd10_table_stat")
-    })
-})
-app.get('/error_cat_icd10_stat',(req,res) =>{
-    conn_stat.query("SELECT chapter, (preferred_name + inclusion + exclusion + codinghint + `definition` + footnote + note + modifierlink + star + draggers) as summation FROM( SELECT chapter, SUM(`code` NOT LIKE '') code, SUM(`preferred-name` NOT LIKE '') preferred_name, SUM(inclusion NOT LIKE '') inclusion, SUM(exclusion NOT LIKE '') exclusion, SUM(codinghint NOT LIKE '') codinghint, SUM(`definition` NOT LIKE '') `definition`, SUM(footnote NOT LIKE '') footnote, SUM(note NOT LIKE '') note, SUM(modifierlink NOT LIKE '') modifierlink, SUM(star NOT LIKE '') star, SUM(draggers NOT LIKE '') draggers, FromRoman(chapter) Roman FROM web_project_table.icd10_category_errorreport GROUP BY chapter ORDER BY Roman) res;", (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("error_cat_icd10_stat")
-    })
-})
-app.get('/error_cat_icd10_table_stat',(req,res) =>{
-    conn_stat.query("SELECT chapter, (preferred_name + inclusion + exclusion + codinghint + `definition` + footnote + note + modifierlink + star + draggers) as summation FROM( SELECT chapter, SUM(`code` NOT LIKE '') code, SUM(`preferred-name` NOT LIKE '') preferred_name, SUM(inclusion NOT LIKE '') inclusion, SUM(exclusion NOT LIKE '') exclusion, SUM(codinghint NOT LIKE '') codinghint, SUM(`definition` NOT LIKE '') `definition`, SUM(footnote NOT LIKE '') footnote, SUM(note NOT LIKE '') note, SUM(modifierlink NOT LIKE '') modifierlink, SUM(star NOT LIKE '') star, SUM(draggers NOT LIKE '') draggers, FromRoman(chapter) Roman FROM web_project_table.icd10_category_errorreport GROUP BY chapter ORDER BY Roman) res;", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("useful_keyword")
     })
 })
+// app.get('/error_cat_icd10_stat',(req,res) =>{
+//     conn_stat.query("SELECT chapter, (preferred_name + inclusion + exclusion + codinghint + `definition` + footnote + note + modifierlink + star + draggers) as summation FROM( SELECT chapter, SUM(`code` NOT LIKE '') code, SUM(`preferred-name` NOT LIKE '') preferred_name, SUM(inclusion NOT LIKE '') inclusion, SUM(exclusion NOT LIKE '') exclusion, SUM(codinghint NOT LIKE '') codinghint, SUM(`definition` NOT LIKE '') `definition`, SUM(footnote NOT LIKE '') footnote, SUM(note NOT LIKE '') note, SUM(modifierlink NOT LIKE '') modifierlink, SUM(star NOT LIKE '') star, SUM(draggers NOT LIKE '') draggers, FromRoman(chapter) Roman FROM web_project_table.icd10_category_errorreport GROUP BY chapter ORDER BY Roman) res;", (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("error_cat_icd10_stat")
+//     })
+// })
+// app.get('/error_cat_icd10_table_stat',(req,res) =>{
+//     conn_stat.query("SELECT chapter, (preferred_name + inclusion + exclusion + codinghint + `definition` + footnote + note + modifierlink + star + draggers) as summation FROM( SELECT chapter, SUM(`code` NOT LIKE '') code, SUM(`preferred-name` NOT LIKE '') preferred_name, SUM(inclusion NOT LIKE '') inclusion, SUM(exclusion NOT LIKE '') exclusion, SUM(codinghint NOT LIKE '') codinghint, SUM(`definition` NOT LIKE '') `definition`, SUM(footnote NOT LIKE '') footnote, SUM(note NOT LIKE '') note, SUM(modifierlink NOT LIKE '') modifierlink, SUM(star NOT LIKE '') star, SUM(draggers NOT LIKE '') draggers, FromRoman(chapter) Roman FROM web_project_table.icd10_category_errorreport GROUP BY chapter ORDER BY Roman) res;", (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("useful_keyword")
+//     })
+// })
 
 
 
@@ -476,169 +473,169 @@ app.get('/error_cat_icd10_table_stat',(req,res) =>{
 //table
  
 //Total Number of Sub-Category and Verified Sub-Category In Particular Chapter Table
-app.get('/table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct claml_code, chapter, claml_subcategory_label, thai_term, FromRoman(chapter) Roman FROM web_project_table.`icd10_subcategory_stat_all_raw2(4)` WHERE chapter = ? order by Roman;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("tot_subcat_table_stat")
-    })
-})
+// app.get('/table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT distinct claml_code, chapter, claml_subcategory_label, thai_term, FromRoman(chapter) Roman FROM web_project_table.`icd10_subcategory_stat_all_raw2(4)` WHERE chapter = ? order by Roman;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("tot_subcat_table_stat")
+//     })
+// })
 
-app.get('/chapter_cat_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct category, chapter, claml_category_label, category_thai_term, FromRoman(chapter) Roman FROM web_project_table.`icd10_category_stat_raw2(10)` WHERE chapter = ? order by Roman;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("tot_subcat_table_stat")
-    })
-})
+// app.get('/chapter_cat_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT distinct category, chapter, claml_category_label, category_thai_term, FromRoman(chapter) Roman FROM web_project_table.`icd10_category_stat_raw2(10)` WHERE chapter = ? order by Roman;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("tot_subcat_table_stat")
+//     })
+// })
 
-app.get('/mod1_chapter_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct modifier_code, CHAPTER, label, fromRoman(CHAPTER) Roman FROM web_project_table.`icd10_subcategory_stat_1digitmodifer_raw2(6)` WHERE CHAPTER = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("mod1_chapter_table")
-    })
-})
+// app.get('/mod1_chapter_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT distinct modifier_code, CHAPTER, label, fromRoman(CHAPTER) Roman FROM web_project_table.`icd10_subcategory_stat_1digitmodifer_raw2(6)` WHERE CHAPTER = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("mod1_chapter_table")
+//     })
+// })
 
-app.get('/mod2_chapter_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct modifier_code, CHAPTER, label, fromRoman(CHAPTER) Roman FROM web_project_table.`icd10_subcategory_stat_2digitmodifer_raw2(7)` WHERE CHAPTER = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("mod2_chapter_table")
-    })
-})
+// app.get('/mod2_chapter_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT distinct modifier_code, CHAPTER, label, fromRoman(CHAPTER) Roman FROM web_project_table.`icd10_subcategory_stat_2digitmodifer_raw2(7)` WHERE CHAPTER = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("mod2_chapter_table")
+//     })
+// })
 
-app.get('/mod_total_chapter_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct modifier_code, CHAPTER, label, fromRoman(CHAPTER) Roman FROM web_project_table.`icd10_subcategory_stat_modifieronly_raw3(1)` WHERE CHAPTER = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("mod_total_chapter_table")
-    })
-})
+// app.get('/mod_total_chapter_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT distinct modifier_code, CHAPTER, label, fromRoman(CHAPTER) Roman FROM web_project_table.`icd10_subcategory_stat_modifieronly_raw3(1)` WHERE CHAPTER = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("mod_total_chapter_table")
+//     })
+// })
 
-app.get('/3match_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT *, FromRoman(chapter) Roman FROM web_project_table.`icd10_thcc_pcu2(13)` WHERE CHAPTER = ? AND WHO like 'exist' AND THCC like 'exist' AND PCU like 'exist' GROUP BY code  ORDER BY Roman;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("3match_table   ")
-    })
-})
-app.get('/mod1_character_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT * FROM statistic.mod1_character_table WHERE alpha = ?;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("mod1_character_table")
-    })
-})
-app.get('/mod_total_character_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT * FROM web_project_table.icd10_subcategory_stat_all_raw_alpha WHERE length(claml_code) > 5 AND alpha = ? ORDER BY alpha;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("mod_total_character_table")
-    })
-})
+// app.get('/3match_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT *, FromRoman(chapter) Roman FROM web_project_table.`icd10_thcc_pcu2(13)` WHERE CHAPTER = ? AND WHO like 'exist' AND THCC like 'exist' AND PCU like 'exist' GROUP BY code  ORDER BY Roman;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("3match_table   ")
+//     })
+// })
+// app.get('/mod1_character_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT * FROM statistic.mod1_character_table WHERE alpha = ?;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("mod1_character_table")
+//     })
+// })
+// app.get('/mod_total_character_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT * FROM web_project_table.icd10_subcategory_stat_all_raw_alpha WHERE length(claml_code) > 5 AND alpha = ? ORDER BY alpha;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("mod_total_character_table")
+//     })
+// })
 
-app.get('/keyphrase_icd10_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT Chapter, claml_code, keyPhrase, sub_category_thai_term, FromRoman(Chapter) Roman FROM web_project_table.`icd10_keyphase_stat_raw(8)` WHERE Chapter is not null AND Chapter = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("keyphrase_icd10_table")
-    })
-})
+// app.get('/keyphrase_icd10_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT Chapter, claml_code, keyPhrase, sub_category_thai_term, FromRoman(Chapter) Roman FROM web_project_table.`icd10_keyphase_stat_raw(8)` WHERE Chapter is not null AND Chapter = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("keyphrase_icd10_table")
+//     })
+// })
 
-app.get('/character_normal_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT * FROM web_project_table.icd10_subcategory_stat_all_raw_alpha WHERE length(claml_code) = 5 AND alpha = ? ORDER BY alpha;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("character_normal_table")
-    })
-})
+// app.get('/character_normal_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT * FROM web_project_table.icd10_subcategory_stat_all_raw_alpha WHERE length(claml_code) = 5 AND alpha = ? ORDER BY alpha;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("character_normal_table")
+//     })
+// })
 
-app.get('/character_subcat_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT * FROM web_project_table.icd10_subcategory_stat_all_raw_alpha WHERE alpha = ? ORDER BY claml_code;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("character_subcat_table")
-    })
-})
+// app.get('/character_subcat_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT * FROM web_project_table.icd10_subcategory_stat_all_raw_alpha WHERE alpha = ? ORDER BY claml_code;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("character_subcat_table")
+//     })
+// })
 
-app.get('/character_cat_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT * FROM web_project_table.icd10_category_stat_all_raw_alpha WHERE  ORDER BY category;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("character_cat_table")
-    })
-})
-app.get('/chapter_normal_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct claml_code, chapter, claml_subcategory_label, thai_term FROM web_project_table.`icd10_subcategory_stat_normalonly_raw2(2)` WHERE chapter = ? ORDER BY claml_code;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("chapter_normal_table")
-    })
-})
+// app.get('/character_cat_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT * FROM web_project_table.icd10_category_stat_all_raw_alpha WHERE  ORDER BY category;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("character_cat_table")
+//     })
+// })
+// app.get('/chapter_normal_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT distinct claml_code, chapter, claml_subcategory_label, thai_term FROM web_project_table.`icd10_subcategory_stat_normalonly_raw2(2)` WHERE chapter = ? ORDER BY claml_code;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("chapter_normal_table")
+//     })
+// })
 
-app.get('/useful_snomed_synonym_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct * FROM web_project_table.snomed_synonym_raw WHERE distance >2 AND alpha = ? ORDER BY code;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("useful_snomed_synonym_table")
-    })
-})
-app.get('/useful_snomed_synonym_chapter_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct * FROM web_project_table.snomed_synonym_raw WHERE distance >2 AND CHAPTER = ? ORDER BY code;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("useful_snomed_synonym_chapter_table")
-    })
-})
+// app.get('/useful_snomed_synonym_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT distinct * FROM web_project_table.snomed_synonym_raw WHERE distance >2 AND alpha = ? ORDER BY code;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("useful_snomed_synonym_table")
+//     })
+// })
+// app.get('/useful_snomed_synonym_chapter_table/:chapter',(req,res) =>{
+//     let chapter = req.params.chapter;
+//     conn_stat.query("SELECT distinct * FROM web_project_table.snomed_synonym_raw WHERE distance >2 AND CHAPTER = ? ORDER BY code;",chapter, (err,rows,fields) =>{
+//         console.log("fetch.....")
+//         if (err) throw err;
+//             res.json(rows)
+//             console.log("useful_snomed_synonym_chapter_table")
+//     })
+// })
 
-app.get('/block_chapter_label_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT * FROM web_project_table.icd10_block_label WHERE CHAPTER = ?;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("block_chapter_label_table")
-    })
-})
+// // app.get('/block_chapter_label_table/:chapter',(req,res) =>{
+// //     let chapter = req.params.chapter;
+// //     conn_stat.query("SELECT * FROM web_project_table.icd10_block_label WHERE CHAPTER = ?;",chapter, (err,rows,fields) =>{
+// //         console.log("fetch.....")
+// //         if (err) throw err;
+// //             res.json(rows)
+// //             console.log("block_chapter_label_table")
+// //     })
+// // })
 
-app.get('/block_character_label_table/:chapter',(req,res) =>{
-    let chapter = req.params.chapter;
-    conn_stat.query("SELECT * FROM web_project_table.icd10_block_alpha WHERE alpha = ?;",chapter, (err,rows,fields) =>{
-        console.log("fetch.....")
-        if (err) throw err;
-            res.json(rows)
-            console.log("block_character_label_table")
-    })
-})
+// // app.get('/block_character_label_table/:chapter',(req,res) =>{
+// //     let chapter = req.params.chapter;
+// //     conn_stat.query("SELECT * FROM web_project_table.icd10_block_alpha WHERE alpha = ?;",chapter, (err,rows,fields) =>{
+// //         console.log("fetch.....")
+// //         if (err) throw err;
+// //             res.json(rows)
+// //             console.log("block_character_label_table")
+// //     })
+// // })
 
