@@ -21,6 +21,10 @@ const conn_stat = mysql.createConnection({
 })
 
 
+// conn.connect(function(err) {
+//     if (err) throw err;
+//     console.log("Connected to mysql!");
+// });
 conn_stat.connect(function(err) {
     if (err) throw err;
     console.log("Connected to mysql! database:stat");
@@ -284,16 +288,24 @@ app.get('/3match_table_stat',(req,res) =>{
     })
 })
 app.get('/icd10_keyPhrase_stat',(req,res) =>{
-    conn_stat.query("SELECT *, FORMAT(count(chapter), 0) total , count(chapter) COUNT FROM statistic.`icd10_keyphase_stat_raw(8)` GROUP BY chapter HAVING COUNT(chapter) > 0 ORDER BY keyPhraseId ASC;", (err,rows,fields) =>{
+    conn_stat.query("SELECT * FROM (SELECT *, FORMAT(count(*), 0) total, count(*) COUNT, FromRoman(Chapter) Roman From statistic.total_icd10_keyphrase_v2 group by Chapter with rollup) res WHERE res.COUNT <> '50707' order by CASE WHEN Chapter is null then 0 end, Roman ASC;", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
             console.log("icd10_keyPhrase_stat")
     })
 })
+app.get('/icd10_keyPhrase_table',(req,res) =>{
+    conn_stat.query("SELECT * FROM (SELECT *, FORMAT(count(*), 0) total, count(*) COUNT, FromRoman(Chapter) Roman From statistic.total_icd10_keyphrase_v2 group by Chapter with rollup) res order by CASE WHEN Chapter is null then 0 end, Roman ASC;", (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("icd10_keyPhrase_table")
+    })
+})
 app.get('/keyWord_keyPhrase_stat',(req,res) =>{
         // conn_stat.query("SELECT COUNT(DISTINCT LOWER(keyword)) keyword , (SELECT COUNT(DISTINCT LOWER(term)) keyphrase FROM statistic.icd10_keyphrase_real) as keyphrase FROM compare.icd10_keyword_sharif_ver UNION SELECT COUNT(DISTINCT LOWER(keyWord)) keyword, (SELECT COUNT(DISTINCT LOWER(term)) keyphrase FROM statistic.mesh_keyphrase_real )FROM statistic.mesh_keyword_distinct UNION SELECT COUNT(DISTINCT LOWER(keyWord)) keyword, (SELECT COUNT(DISTINCT LOWER(term)) keyphrase FROM statistic.snomed_keyphrase_real) FROM statistic.snomed_keyword_distinct;", (err,rows,fields) =>{
-        conn_stat.query("SELECT *, FORMAT(keyword, 0) s_keyword, FORMAT(keyphrase, 0) s_keyphrase FROM statistic.keyword_keyphrase;", (err,rows,fields) =>{
+        conn_stat.query(" SELECT *, format(keyword,'') s_keyword, format(keyphrase,'') s_keyphrase FROM statistic.mesh_snomed_keyword_keyphrase;", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
@@ -345,28 +357,21 @@ app.get('/normal_table_chapter',(req,res) =>{
     })
 })
 
-app.get('/synonym_useful',(req,res) =>{
-    conn_stat.query("SELECT distinct *, count(code) total, format(count(code), 0) number FROM statistic.snomed_synonym_raw WHERE distance >2 GROUP BY alpha ORDER BY alpha;", (err,rows,fields) =>{
+app.get('/mesh_keyword',(req,res) =>{
+    conn_stat.query("SELECT * FROM(SELECT ifnull(UPPER(`character`), '') `character`, sum(`keyword`) `count`, FORMAT(sum(`keyword`),'') `s_count` FROM statistic.mesh_keyword_table group by `character` with rollup)res;", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
-            console.log("synonym_useful")
+            console.log("mesh_keyword")
     })
 })
-app.get('/synonym_useful_table',(req,res) =>{
-    conn_stat.query("SELECT alpha, code, icd10Term, snomed_term, total, number FROM (SELECT *, IFNULL(alpha, '') cha, count(code) total, format(count(code), 0) number FROM statistic.snomed_synonym_raw WHERE distance >2 AND alpha is not null GROUP BY alpha WITH ROLLUP) res GROUP BY res.alpha ORDER BY CASE WHEN alpha is null then 0 end, alpha asc;", (err,rows,fields) =>{
-        console.log("fetch.....er")
-        if (err) throw err;
-            res.json(rows)
-            console.log("synonym_useful_table")
-    })
-})
-app.get('/synonym_useful_chapter',(req,res) =>{
-    conn_stat.query("SELECT  distinct *, count(code) total, format(count(code), 0) number, FromRoman(CHAPTER) Roman FROM statistic.snomed_synonym_raw WHERE distance >2 GROUP BY CHAPTER ORDER BY Roman;", (err,rows,fields) =>{
+
+app.get('/useful_keyword_snomed_character',(req,res) =>{
+    conn_stat.query("SELECT * FROM(SELECT ifnull(UPPER(`character`), '') `character`, sum(`count`) `count`, FORMAT(sum(`count`),'') `s_count` FROM statistic.snomed_keyword_table group by `character` with rollup)res;    ", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
-            console.log("synonym_useful_chapter")
+            console.log("useful_keyword_snomed_character")
     })
 })
 app.get('/synonym_useful_chapter_table',(req,res) =>{
@@ -529,7 +534,7 @@ app.get('/mod_total_character_table/:chapter',(req,res) =>{
 
 app.get('/keyphrase_icd10_table/:chapter',(req,res) =>{
     let chapter = req.params.chapter;
-    conn_stat.query("SELECT Chapter, claml_code, keyPhrase, sub_category_thai_term, FromRoman(Chapter) Roman FROM statistic.`icd10_keyphase_stat_raw(8)` WHERE Chapter is not null AND Chapter = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
+    conn_stat.query("SELECT *, FromRoman(Chapter) Roman FROM statistic.total_icd10_keyphrase_v2 WHERE Chapter = ? ORDER BY Roman;",chapter, (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
@@ -537,9 +542,19 @@ app.get('/keyphrase_icd10_table/:chapter',(req,res) =>{
     })
 })
 
+app.get('/keyphrase_icd10_null_table/:chapter',(req,res) =>{
+    let chapter = req.params.chapter;
+    conn_stat.query("SELECT * FROM statistic.total_icd10_keyphrase_v2 a WHERE a.Chapter is null;",chapter, (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("keyphrase_icd10_null_table")
+    })
+})
+
 app.get('/character_normal_table/:chapter',(req,res) =>{
     let chapter = req.params.chapter;
-    conn_stat.query("SELECT * FROM statistic.icd10_subcategory_stat_all_raw_alpha WHERE length(claml_code) = 5 AND alpha = ? ORDER BY alpha;",chapter, (err,rows,fields) =>{
+    conn_stat.query("SELECT chapter, claml_code, claml_subcategory_label, thai_term FROM statistic.`icd10_subcategory_stat_normalonly_raw2(2)` WHERE substr(claml_code,1,1) = ? group by claml_code;",chapter, (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
@@ -576,22 +591,41 @@ app.get('/chapter_normal_table/:chapter',(req,res) =>{
     })
 })
 
-app.get('/useful_snomed_synonym_table/:chapter',(req,res) =>{
+app.get('/useful_mesh_keyword_character_table/:chapter',(req,res) =>{
     let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct * FROM statistic.snomed_synonym_raw WHERE distance >2 AND alpha = ? ORDER BY code;",chapter, (err,rows,fields) =>{
+    conn_stat.query("SELECT keyword, UPPER(`character`) `character` FROM statistic.mesh_keyword_table_hyper where UPPER(`character`) = ?;",chapter, (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
-            console.log("useful_snomed_synonym_table")
+            console.log("useful_mesh_keyword_character_table")
     })
 })
-app.get('/useful_snomed_synonym_chapter_table/:chapter',(req,res) =>{
+app.get('/useful_snomed_keyword_character_table/:chapter',(req,res) =>{
     let chapter = req.params.chapter;
-    conn_stat.query("SELECT distinct * FROM statistic.snomed_synonym_raw WHERE distance >2 AND CHAPTER = ? ORDER BY code;",chapter, (err,rows,fields) =>{
+    conn_stat.query("SELECT keyword, UPPER(`character`) `character` FROM statistic.snomed_keyword_table_hyper where UPPER(`character`) = ?;",chapter, (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
-            console.log("useful_snomed_synonym_chapter_table")
+            console.log("useful_snomed_keyword_character_table")
+    })
+})
+
+app.get('/useful_keyword_mesh_snomed/:chapter',(req,res) =>{
+    let chapter = req.params.chapter;
+    conn_stat.query("SELECT all_unique_mesh_snomed_stem_lem_ver2.lem_keyword FROM compare.all_unique_mesh_snomed_stem_lem_ver2 group by lem_keyword order by lem_keyword;",chapter, (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("useful_keyword_mesh_snomed")
+    })
+})
+app.get('/useful_keyword_icd10/:chapter',(req,res) =>{
+    let chapter = req.params.chapter;
+    conn_stat.query("SELECT distinct LOWER(keyword) keyword FROM compare.icd10_keyword_sharif_ver order by keyword;",chapter, (err,rows,fields) =>{
+        console.log("fetch.....")
+        if (err) throw err;
+            res.json(rows)
+            console.log("useful_keyword_icd10")
     })
 })
 
