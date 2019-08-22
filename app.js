@@ -358,7 +358,7 @@ app.get('/normal_table_chapter',(req,res) =>{
 })
 
 app.get('/mesh_keyword',(req,res) =>{
-    conn_stat.query("SELECT * FROM(SELECT ifnull(UPPER(`character`), '') `character`, sum(`keyword`) `count`, FORMAT(sum(`keyword`),'') `s_count` FROM statistic.mesh_keyword_table group by `character` with rollup)res;", (err,rows,fields) =>{
+    conn_stat.query("SELECT * FROM(SELECT keyPhraseId, root, class, term, lem_keyword, `character`, ifnull(`character`,'') `char`, sum(total) total, format(sum(total),0) s_total FROM statistic.mesh_keyword_final_ver_table group by `character` with rollup) res ORDER BY CASE WHEN `character` is null then 0 end, CASE WHEN `character` not regexp '[A-Z]' then 0 end,  `character` ASC;", (err,rows,fields) =>{
         console.log("fetch.....")
         if (err) throw err;
             res.json(rows)
