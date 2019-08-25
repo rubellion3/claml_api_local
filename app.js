@@ -13,12 +13,12 @@ app.listen(PORT), (req,res) =>{
     console.log("USE 3003 local host")
 }
 
-const conn = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "test"
-});
+// const conn = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "root",
+//   database: "test"
+// });
 const conn_stat = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -33,17 +33,17 @@ const conn_stat = mysql.createConnection({
 //     database: 'network'
 // })
 
-const conn_search = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "search_index"
-});
+// const conn_search = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "root",
+//   database: "search_index"
+// });
 
-conn.connect(function(err) {
-  if (err) throw err;
-  // console.log("Connected to mysql!");
-});
+// conn.connect(function(err) {
+//   if (err) throw err;
+//   // console.log("Connected to mysql!");
+// });
 
 conn_stat.connect(function(err) {
   if (err) throw err;
@@ -53,11 +53,6 @@ conn_stat.connect(function(err) {
 app.get("/", (req, res) => {
   res.send("This is an icd10 api makes by sharifz");
 });
-
-
-app.get('/',(req,res) =>{
- res.send("This is an icd10 api makes by sharifz")
-})
 
 app.get('/new_block_stat',(req,res) =>{
     conn_stat.query("SELECT *, fromRoman(CHAPTER) Roman FROM statistic.block_stat_new ORDER BY Roman;", (err,rows,fields) =>{
