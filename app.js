@@ -22,7 +22,7 @@ const conn = mysql.createConnection({
 const conn_stat = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'root',
     database: 'statistic'
 })
 
