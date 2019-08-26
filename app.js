@@ -1,7 +1,7 @@
 const express = require("express");
 const mysql = require("mysql");
 const app = express();
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.PORT || 8082;
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
