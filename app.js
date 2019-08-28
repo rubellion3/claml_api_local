@@ -26,13 +26,18 @@ const conn_stat = mysql.createConnection({
     database: 'statistic'
 })
 
+db_config = {
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'statistic'
+}
 var  connection 
 
 
 function handleDisconnect() {
-  connection = mysql.createConnection(conn_stat); // Recreate the connection, since
+  connection = mysql.createConnection(db_config); // Recreate the connection, since
                                                   // the old one cannot be reused.
-
   connection.connect(function(err) {              // The server is either down
     if(err) {                                     // or restarting (takes a while sometimes).
       console.log('error when connecting to db:', err);
