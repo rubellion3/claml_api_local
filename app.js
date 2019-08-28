@@ -1,7 +1,7 @@
 const express = require("express");
 const mysql = require("mysql");
 const app = express();
-const PORT = process.env.PORT || 8082;
+// const PORT = process.env.PORT || 8082;
 const cors = require("cors");
 app.use(cors());
 app.use(function(req, res, next) {
@@ -9,10 +9,10 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   });
-
-app.listen(PORT), (req,res) =>{
-    console.log("USE 3003 local host")
-}
+app.set("port", process.env.PORT || 8082);
+// app.listen(PORT), (req,res) =>{
+//     console.log("USE 3003 local host")
+// }
 
 // const conn = mysql.createConnection({
 //   host: "localhost",
