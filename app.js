@@ -21,7 +21,7 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   });
-app.set("port", process.env.PORT || 8082);
+app.set("port", process.env.PORT || 8081);
 
 app.listen(app.get("port"), function() {
     console.log("Your node.js server is running on PORT: ", app.get("port"));
