@@ -1,8 +1,20 @@
 const express = require("express");
 const mysql = require("mysql");
 const app = express();
+const elasticsearch = require("elasticsearch");
 // const PORT = process.env.PORT || 8082;
 const cors = require("cors");
+const client = new elasticsearch.Client({
+    host: "127.0.0.1:9201",
+    log: "error"
+  });
+  client.ping({ requestTimeout: 30000 }, function(error) {
+    if (error) {
+      console.error("elasticsearch cluster is down!");
+    } else {
+      console.log("Everything is ok");
+    }
+  });
 app.use(cors());
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -77,10 +89,361 @@ handleDisconnect();
 //   if (err) throw err;
 //   // console.log("Connected to mysql!");
 // });
-
+app.get("/icd10_v2/s/", function(req, res) {
+    let body = {
+      size: 100,
+      from: 0,
+      // explain: true, 
+      query: {
+        function_score: {
+          query: {
+            multi_match: {
+              type: "phrase_prefix",
+              query: req.query["q"],
+              fields: [
+                "code^20",
+                "term^10",
+                "inclusion^5",
+                "thai_term",
+                "snomed^2",
+                "mesh^2"
+              ],
+              operator: "and",
+              zero_terms_query: "all",
+              minimum_should_match: 1,
+              max_expansions: 10
+            }
+          },
+          functions: [
+            {
+              filter: {
+                match_phrase: {
+                  snomed: req.query["q"]
+                }
+              },
+              weight: 5
+            },
+            {
+              filter: {
+                match_phrase: {
+                  mesh: req.query["q"]
+                }
+              },
+              weight: 5
+            },
+            {
+              filter: {
+                match_phrase: {
+                  inclusion: req.query["q"]
+                }
+              },
+              weight: 5
+            }
+          ],
+          score_mode: "sum",
+          boost_mode: "sum"
+        }
+      }
+    };
+  
+    client
+      .search({ index: "icd10_v2", body: body })
+      .then(results => {
+        res.send(results.hits.hits);
+      })
+      .catch(err => {
+        console.log(err);
+        res.send([]);
+      });
+  });
+  //for order code
+  app.get("/icd10_v2/sortCode", function(req, res) {
+    let body = {
+      size: 100,
+      from: 0,
+      // explain: true, 
+      sort: [
+        {
+          "code.keyword": {
+            order: req.query["by"]
+          }
+        }
+      ],
+      query: {
+        function_score: {
+          query: {
+            multi_match: {
+              type: "phrase_prefix",
+              query: req.query["q"],
+              fields: [
+                "code^20",
+                "term^10",
+                "inclusion^5",
+                "thai_term",
+                "snomed^2",
+                "mesh^2"
+              ],
+              operator: "and",
+              zero_terms_query: "all",
+              minimum_should_match: 1,
+              max_expansions: 10
+            }
+          },
+          functions: [
+            {
+              filter: {
+                match_phrase: {
+                  snomed: req.query["q"]
+                }
+              },
+              weight: 5
+            },
+            {
+              filter: {
+                match_phrase: {
+                  mesh: req.query["q"]
+                }
+              },
+              weight: 5
+            },
+            {
+              filter: {
+                match_phrase: {
+                  inclusion: req.query["q"]
+                }
+              },
+              weight: 5
+            }
+          ],
+          score_mode: "sum",
+          boost_mode: "sum"
+        }
+      }
+    };
+  
+    client
+      .search({ index: "icd10_v2", body: body })
+      .then(results => {
+        res.send(results.hits.hits);
+      })
+      .catch(err => {
+        console.log(err);
+        res.send([]);
+      });
+  });
+  // for order term
+  app.get("/icd10_v2/sortTerm", function(req, res) {
+    let body = {
+      size: 100,
+      from: 0,
+      // explain: true, 
+      sort: [
+        {
+          "term.keyword": {
+            order: req.query["by"]
+          }
+        }
+      ],
+      query: {
+        function_score: {
+          query: {
+            multi_match: {
+              type: "phrase_prefix",
+              query: req.query["q"],
+              fields: [
+                "code^20",
+                "term^10",
+                "inclusion^5",
+                "thai_term",
+                "snomed^2",
+                "mesh^2"
+              ],
+              operator: "and",
+              zero_terms_query: "all",
+              minimum_should_match: 1,
+              max_expansions: 10
+            }
+          },
+          functions: [
+            {
+              filter: {
+                match_phrase: {
+                  snomed: req.query["q"]
+                }
+              },
+              weight: 5
+            },
+            {
+              filter: {
+                match_phrase: {
+                  mesh: req.query["q"]
+                }
+              },
+              weight: 5
+            },
+            {
+              filter: {
+                match_phrase: {
+                  inclusion: req.query["q"]
+                }
+              },
+              weight: 5
+            }
+          ],
+          score_mode: "sum",
+          boost_mode: "sum"
+        }
+      }
+    };
+  
+    client
+      .search({ index: "icd10_v2", body: body })
+      .then(results => {
+        res.send(results.hits.hits);
+      })
+      .catch(err => {
+        console.log(err);
+        res.send([]);
+      });
+  });
+  
+  
+  app.get("/icd10_relation/:input", function(req, res, next) {
+    let body = {
+      size: 100,
+      from: 0,
+      query: {
+        multi_match: {
+            type: "phrase", 
+            query: req.params.input,
+            fields:['sourceId','destinationId']
+          // operator    :"or"
+        }
+      }
+    };
+    client
+      .search({
+        index: "icd10_relation",
+        body: body
+      })
+      .then(results => {
+        res.send(results.hits.hits);
+      });
+  });
+  
+  app.get("/icd10/:input", function(req, res, next) {
+    let body = {
+      size: 1,
+      from: 0,
+      query: {
+        match: {
+          keyPhraseId:{
+            query: req.params.input,
+          }
+          // operator    :"or"
+        }
+      }
+    };
+    client
+      .search({
+        index: "icd10_v2",
+        body: body
+      })
+      .then(results => {
+        res.send(results.hits.hits);
+      });
+  });
+  
+  app.get("/icd10_node/:input", function(req, res, next) {
+    let body = {
+      size: 100,
+      from: 0,
+      query: {
+        multi_match: {
+       
+            query: req.params.input,
+            fields:['id']
+          // operator    :"or"
+        }
+      }
+    };
+    client
+      .search({
+        index: "icd10_node",
+        body: body
+      })
+      .then(results => {
+        res.send(results.hits.hits);
+      });
+  });
+  
+  app.get("/icd10_node", function(req, res, next) {
+    let body = {
+      size: 10,
+      query: {
+        match_all: {
+  
+        }
+      }
+    };
+    client
+      .search({
+        index: "icd_node",
+        body: body
+      })
+      .then(results => {
+        res.send(results.hits.hits);
+      });
+  });
+  
+  app.get("/snomed_map/:id", function(req, res, next) {
+    let body = {
+      size: 5,
+      query: {
+        match: {
+          id: {
+            query: req.params.id
+          }
+        
+        }
+      }
+    };
+    client
+      .search({
+        index: "snomed_map",
+        body: body
+      })
+      .then(results => {
+        res.send(results.hits.hits);
+      });
+  });
+  
+  app.get("/mesh_map/:id", function(req, res, next) {
+    let body = {
+      size: 10,
+      query: {
+        match: {
+          icd10_preferredId: {
+            query: req.params.id
+          }
+        
+        }
+      }
+    };
+    client
+      .search({
+        index: "mesh_map",
+        body: body
+      })
+      .then(results => {
+        res.send(results.hits.hits);
+      });
+  });
+  
+// statistic  
 conn_stat.connect(function(err) {
   if (err) throw err;
-  console.log("Connected to mysql! database:stat");
+  console.log("Connected to mysql! database");
 });
 
 app.get("/", (req, res) => {
