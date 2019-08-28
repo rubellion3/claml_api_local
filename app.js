@@ -10,9 +10,11 @@ app.use(function(req, res, next) {
     next();
   });
 app.set("port", process.env.PORT || 8082);
-// app.listen(PORT), (req,res) =>{
-//     console.log("USE 3003 local host")
-// }
+
+app.listen(app.get("port"), function() {
+    console.log("Your node.js server is running on PORT: ", app.get("port"));
+  });
+  
 
 // const conn = mysql.createConnection({
 //   host: "localhost",
